@@ -42,7 +42,7 @@ class VectorStoreManager:
                     from pinecone import ServerlessSpec
                     pc.create_index(
                         name=pinecone_index,
-                        dimension=3072,  # gemini-embedding-001 dimension
+                        dimension=768,  # Matches text-embedding-004 and embedding-001
                         metric="cosine",
                         spec=ServerlessSpec(cloud="aws", region="us-east-1"),
                     )
@@ -78,13 +78,23 @@ class VectorStoreManager:
         )
         self.use_pinecone = False
 
-    def add_documents(self, documents: List[Document]) -> int:
-        """Add documents to the vector store."""
+    async def add_documents(self, documents: List[Document]) -> int:
+        """Add documents to the vector store with batch processing."""
         if not documents or self.vectorstore is None:
             return 0
 
-        self.vectorstore.add_documents(documents)
-        return len(documents)
+        # Batch size for embeddings and upsert
+        batch_size = 50
+        total_docs = len(documents)
+        
+        for i in range(0, total_docs, batch_size):
+            batch = documents[i : i + batch_size]
+            print(f"[PROCESS] Processing batch {i//batch_size + 1}/{(total_docs-1)//batch_size + 1}...")
+            # Note: PineconeVectorStore handles async if provided, but here we call it sequentially in batches 
+            # to avoid overloading the API and improve reliability.
+            self.vectorstore.add_documents(batch)
+            
+        return total_docs
 
     def similarity_search(self, query: str, k: int = 4) -> List[Document]:
         """Search for relevant documents."""

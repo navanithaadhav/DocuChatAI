@@ -1,0 +1,13 @@
+
+.env
+__pycache__/
+*.pyc
+venv/
+.venv/
+uploads/
+chroma_db_v3/
+vector_db/
+tmp/
+node_modules/
+dist/
+.DS_Store

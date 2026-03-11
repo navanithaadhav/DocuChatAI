@@ -48,7 +48,7 @@ async def process_files(files: List[UploadFile]):
         try:
             chunks = await pdf_processor.process_uploaded_pdf(contents, file.filename)
             if chunks:
-                num_added = vector_store.add_documents(chunks)
+                num_added = await vector_store.add_documents(chunks)
                 total_added += num_added
                 processed_files.append(file.filename)
                 
@@ -59,13 +59,29 @@ async def process_files(files: List[UploadFile]):
                     file_size=len(contents),
                 )
         except Exception as e:
-            print(f"Error processing {file.filename}: {e}")
+            error_msg = str(e)
+            print(f"Error processing {file.filename}: {error_msg}")
+            # Identify specific common errors
+            if "PERMISSION_DENIED" in error_msg or "403" in error_msg:
+                raise HTTPException(
+                    status_code=403,
+                    detail=f"Google Generative AI API Key Permission Denied. Please check if your API key is valid and has Generative Language API enabled. Error: {error_msg}"
+                )
+            elif "NOT_FOUND" in error_msg or "404" in error_msg:
+                 raise HTTPException(
+                    status_code=404,
+                    detail=f"Model not found. The model you're trying to use might be restricted or incorrectly named. Error: {error_msg}"
+                )
+            
+            # If it's a single file upload, we can bubble up the error
+            if len(files) == 1:
+                raise HTTPException(status_code=500, detail=f"Error processing {file.filename}: {error_msg}")
             continue
 
     if not processed_files:
         raise HTTPException(
             status_code=400,
-            detail="Could not process any of the uploaded PDF files. Please check if they are valid.",
+            detail="Could not process any of the uploaded PDF files. Please ensure they are valid PDFs with extractable text and that your AI API keys are correctly configured.",
         )
 
     # Rebuild the RAG chain

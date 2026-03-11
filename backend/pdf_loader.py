@@ -15,7 +15,7 @@ from langchain_core.documents import Document
 class PDFProcessor:
     """Processes PDF files: loads content and splits into chunks."""
 
-    def __init__(self, chunk_size: int = 500, chunk_overlap: int = 100):
+    def __init__(self, chunk_size: int = 1000, chunk_overlap: int = 200):
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=chunk_size,
             chunk_overlap=chunk_overlap,
@@ -54,7 +54,14 @@ class PDFProcessor:
         try:
             # Load and split PDF
             documents = self.load_pdf(file_path)
+            
+            if not documents:
+                raise ValueError(f"No text content could be extracted from {filename}. The PDF might be scanned or empty.")
+                
             chunks = self.split_documents(documents)
+            
+            if not chunks:
+                raise ValueError(f"Could not split {filename} into any chunks. The document might be too short or contains only whitespace.")
 
             # Add metadata
             for i, chunk in enumerate(chunks):

@@ -21,10 +21,18 @@ class EmbeddingManager:
         if not self.api_key:
             raise ValueError("GEMINI_API_KEY or GOOGLE_API_KEY environment variable is not set.")
 
-        # Using gemini-embedding-2-preview for better stability
-        # It maintains the 3072 dimensions required by your Pinecone index
+        # Defaulting to 'embedding-001' or 'text-embedding-004' for better baseline stability.
+        # Note: 'gemini-embedding-2-preview' has 3072 dimensions, while
+        # 'text-embedding-004' and 'embedding-001' use 768 dimensions.
+        # Ensure your vector store index dimension matches!
+        
+        self.model_name = "models/text-embedding-004" # 768 dimensions
+        
+        # If the user explicitly wants the high-dim preview model
+        # self.model_name = "models/gemini-embedding-2-preview" # 3072 dimensions
+
         self.embeddings = GoogleGenerativeAIEmbeddings(
-            model="models/gemini-embedding-2-preview",
+            model=self.model_name,
             google_api_key=self.api_key,
             task_type="retrieval_query",
         )
