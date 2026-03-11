@@ -8,16 +8,21 @@ from typing import Dict, List
 
 from dotenv import load_dotenv
 import warnings
-import warnings
 from langchain_google_genai import ChatGoogleGenerativeAI
-# For LangChain 0.3.0+, these are the standard import paths
+
+# Robust imports for LangChain 0.3.0
 try:
-    from langchain.chains.conversational_retrieval.base import ConversationalRetrievalChain
-    from langchain.memory import ConversationBufferWindowMemory
-except ImportError:
-    # Fallback for different environments
     from langchain.chains import ConversationalRetrievalChain
     from langchain.memory import ConversationBufferWindowMemory
+except ImportError:
+    try:
+        # Fallback to internal paths if top-level export is missing
+        from langchain.chains.conversational_retrieval.base import ConversationalRetrievalChain
+        from langchain.memory.buffer_window import ConversationBufferWindowMemory
+    except ImportError:
+        # Last resort fallback (this should not happen with proper install)
+        from langchain_community.chains import ConversationalRetrievalChain
+        from langchain.memory import ConversationBufferWindowMemory
 
 from langchain_core.prompts import PromptTemplate
 
