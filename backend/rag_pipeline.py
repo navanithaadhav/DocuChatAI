@@ -7,10 +7,14 @@ import os
 from typing import Dict, List
 
 from dotenv import load_dotenv
+import warnings
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_classic.chains import ConversationalRetrievalChain
-from langchain_classic.memory import ConversationBufferWindowMemory
+from langchain.chains import ConversationalRetrievalChain
+from langchain.memory import ConversationBufferWindowMemory
 from langchain_core.prompts import PromptTemplate
+
+# Suppress LangChain deprecation warnings for cleaner logs
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 from vector_db.vector_store import vector_store
 
