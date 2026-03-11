@@ -32,7 +32,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="DocuChat AI",
-    description="RAG-based PDF Question Answering API powered by LangChain and OpenAI",
+    description="RAG-based PDF Question Answering API powered by LangChain and Google Gemini",
     version="1.0.0",
     lifespan=lifespan,
 )
