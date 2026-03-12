@@ -21,12 +21,12 @@ class EmbeddingManager:
         if not self.api_key:
             raise ValueError("GEMINI_API_KEY or GOOGLE_API_KEY environment variable is not set.")
 
-        # Defaulting to 'embedding-001' or 'text-embedding-004' for better baseline stability.
+        # Defaulting to 'gemini-embedding-001' for better baseline stability.
         # Note: 'gemini-embedding-2-preview' has 3072 dimensions, while
-        # 'text-embedding-004' and 'embedding-001' use 768 dimensions.
+        # 'gemini-embedding-001' uses 768 dimensions.
         # Ensure your vector store index dimension matches!
         
-        self.model_name = "models/text-embedding-004" # 768 dimensions
+        self.model_name = "models/gemini-embedding-001" # 768 dimensions
         
         # If the user explicitly wants the high-dim preview model
         # self.model_name = "models/gemini-embedding-2-preview" # 3072 dimensions

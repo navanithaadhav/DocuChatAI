@@ -42,7 +42,7 @@ class VectorStoreManager:
                     from pinecone import ServerlessSpec
                     pc.create_index(
                         name=pinecone_index,
-                        dimension=768,  # Matches text-embedding-004 and embedding-001
+                        dimension=768,  # Matches gemini-embedding-001
                         metric="cosine",
                         spec=ServerlessSpec(cloud="aws", region="us-east-1"),
                     )
