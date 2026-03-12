@@ -1,6 +1,7 @@
 """
 DocuChat AI - Backend Server
 FastAPI application for RAG-based PDF question answering.
+Version: 1.0.1
 """
 
 import os
